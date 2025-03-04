@@ -1,0 +1,18 @@
+.nav_item {
+    color: #ffffff !important;
+    background-color: transparent;
+    margin-inline: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+
+    &:hover {
+        color: black !important;
+        background-color: #ffffff;
+    }
+}
+
+.focusPage {
+    color: black !important;
+    background-color: #ffffff !important;
+}
