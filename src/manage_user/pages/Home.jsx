@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import UserList from '../components/UserList';
-
-const storageUsers = JSON.parse(localStorage.getItem('users')) || [];
+import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 
 const Home = () => {
+    const storageUsers = JSON.parse(localStorage.getItem('users')) || [];
     const [users, setUsers] = useState(storageUsers);
 
     const tenRef = useRef();
@@ -14,7 +14,6 @@ const Home = () => {
         localStorage.setItem('users', JSON.stringify(users));
     }, [users]);
 
-    let id = 5;
     const handleAddUser = () => {
         const name = tenRef.current.value.trim();
         const email = emailRef.current.value.trim();
@@ -22,7 +21,7 @@ const Home = () => {
 
         if (name && email && age) {
             const user = {
-                id: id,
+                id: Math.floor(Math.random() * 100),
                 name: name,
                 age: age,
                 email: email,
@@ -30,48 +29,38 @@ const Home = () => {
             setUsers([...users, user]);
             tenRef.current.value = '';
             emailRef.current.value = '';
-            id += 1;
+            ageRef.current.value = '';
         } else {
             alert('Nhập thông tin người dùng');
         }
     };
 
     const handleDeleteUser = (id) => {
-        const currentUsers = users.filter((user) => user.id != id);
+        const currentUsers = users.filter((user) => user.id != parseInt(id));
         setUsers(currentUsers);
     };
 
     return (
-        <div className="max-w-lg mx-auto p-4 bg-white shadow-lg rounded-lg">
-            <h1 className="text-2xl font-bold mb-4 text-center">Quản lý người dùng</h1>
-            <div className="flex space-x-1 mb-4">
-                <input
-                    ref={tenRef}
-                    type="text"
-                    className="border p-2 flex-1 rounded focus:outline-sky-500"
-                    placeholder="Tên người dùng"
-                />
-                <input
-                    ref={emailRef}
-                    type="email"
-                    className="border p-2 flex-1 rounded focus:outline-sky-500"
-                    placeholder="Email"
-                />
-                <input
-                    ref={ageRef}
-                    type="number"
-                    className="border p-2 w-20 rounded focus:outline-sky-500"
-                    placeholder="Tuổi"
-                />
-            </div>
-            <button
-                onClick={handleAddUser}
-                className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-400 cursor-pointer"
-            >
-                Thêm người dùng
-            </button>
-            <UserList users={users} handleDeleteUser={handleDeleteUser} />
-        </div>
+        <Container className="d-flex justify-content-center mt-4">
+            <Card style={{ width: '40rem' }} className="p-4 shadow">
+                <h1 className="text-center mb-4">Quản lý người dùng</h1>
+                <Row className="mb-3">
+                    <Col>
+                        <Form.Control ref={tenRef} type="text" placeholder="Tên người dùng" />
+                    </Col>
+                    <Col>
+                        <Form.Control ref={emailRef} type="email" placeholder="Email" />
+                    </Col>
+                    <Col xs={3}>
+                        <Form.Control ref={ageRef} type="number" placeholder="Tuổi" />
+                    </Col>
+                </Row>
+                <Button onClick={handleAddUser} variant="primary" className="w-100 mb-3">
+                    Thêm người dùng
+                </Button>
+                <UserList users={users} handleDeleteUser={handleDeleteUser} />
+            </Card>
+        </Container>
     );
 };
 

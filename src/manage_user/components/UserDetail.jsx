@@ -1,33 +1,69 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Button, Modal } from 'react-bootstrap';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const UserDetail = () => {
     const users = JSON.parse(localStorage.getItem('users'));
-
+    
     const { id } = useParams();
     const user = users.find((user) => user.id == parseInt(id));
 
+    const navigate = useNavigate();
+    const handleClose = () => {
+        navigate("/");
+    };
+
     return (
-        <div>
-            <div className="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
-                {!user ? (
-                    <h2></h2>
-                ) : (
-                    <>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Chi tiết người dùng</h2>
-                        <p>
-                            <strong className="text-gray-700">Tên:</strong> {user.name}
-                        </p>
-                        <p>
-                            <strong className="text-gray-700">Email:</strong> {user.email}
-                        </p>
-                        <p>
-                            <strong className="text-gray-700">Tuổi:</strong> {user.age}
-                        </p>
-                    </>
-                )}
-            </div>
-        </div>
+        <Modal show={true} onHide={handleClose} centered size="lg">
+            {!user ? (
+                <>
+                    <Modal.Header closeButton className="bg-danger text-white">
+                        <Modal.Title>Không tìm thấy người dùng</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className="text-center py-5">
+                        <h4>Người dùng không tồn tại hoặc đã bị xóa</h4>
+                    </Modal.Body>
+                </>
+            ) : (
+                <>
+                    <Modal.Header className="bg-primary text-white" closeButton>
+                        <Modal.Title>Thông tin chi tiết</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className="px-4 py-4">
+                        <div className="text-center mb-4">
+                            <div className="mb-3">
+                                <img
+                                    src="/src/assets/image.png"
+                                    alt="Avatar"
+                                    className="rounded-circle"
+                                    style={{ width: '100px', height: '100px' }}
+                                />
+                            </div>
+                            <h3 className="mb-0">{user.name}</h3>
+                        </div>
+                        <div>
+                            <div className="d-flex align-items-center mb-3">
+                                <div className="d-flex">
+                                    <strong className="mx-2">Email:</strong>
+                                    <p className="mb-0">{user.email}</p>
+                                </div>
+                            </div>
+                            <div className="d-flex align-items-center mb-3">
+                                <div className="d-flex space-x-1">
+                                    <strong className="mx-2">Tuổi:</strong>
+                                    <p className="mb-0">{user.age}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="danger" onClick={handleClose}>
+                            Đóng
+                        </Button>
+                    </Modal.Footer>
+                </>
+            )}
+        </Modal>
     );
 };
 
