@@ -9,10 +9,14 @@ const Header = () => {
         document.querySelector(`.${styles.focusPage}`)?.focus();
     }, [loc.pathname]);
 
+    const navigate = useNavigate();
+
     return (
-        <Navbar bg="primary" variant="dark" expand="lg">
-            <Container>
-                <Navbar.Brand>Travel App</Navbar.Brand>
+        <Navbar style={{ backgroundColor: '#003B95' }} variant="dark" expand="lg" fixed="top">
+            <Container className="px-0">
+                <Navbar.Brand onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+                    Travel App
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse>
                     <Nav className="me-auto">

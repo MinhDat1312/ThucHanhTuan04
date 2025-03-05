@@ -1,7 +1,7 @@
-import UserApp from './manage_user/UserApp';
+import TravelApp from './travel_app/TravelApp';
 
 function App() {
-    return <UserApp/>;
+    return <TravelApp />;
 }
 
 export default App;
