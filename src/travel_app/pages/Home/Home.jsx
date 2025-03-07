@@ -1,13 +1,48 @@
-import React from 'react';
-import { Button, Card, Carousel, Col, Container, Row } from 'react-bootstrap';
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, Card, Carousel, Col, Container, Modal, Row, Toast } from 'react-bootstrap';
 import styles from './Home.module.scss';
 import ReactCountryFlag from 'react-country-flag';
+import { TravelContext } from '../../TravelContext';
 
 const Home = () => {
+    const [show, setShow] = useState(false);
+    const [place, setPlace] = useState(null);
+    const { submitted, setSubmitted } = useContext(TravelContext);
+
+    useEffect(() => {
+        setTimeout(() => setSubmitted(false), 3000);
+    }, []);
+
+    const handleShow = (place) => {
+        setShow(true);
+        setPlace(place);
+    };
+    const handleHide = () => {
+        setShow(false);
+    };
+
     return (
         <div className={styles.home}>
-            <Carousel style={{ marginLeft: '116px', marginRight: '130px' }} className='rounded-2'>
-                <Carousel.Item className='rounded-2'>
+            {submitted && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: '0%',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 10000,
+                    }}
+                >
+                    <Toast onClose={() => setSubmitted(false)}>
+                        <Toast.Header>
+                            <strong className="me-auto text-success">Notify</strong>
+                        </Toast.Header>
+                        <Toast.Body className="bg-success text-white">Login success</Toast.Body>
+                    </Toast>
+                </div>
+            )}
+            <Carousel style={{ marginLeft: '116px', marginRight: '130px' }} className="rounded-2">
+                <Carousel.Item className="rounded-2">
                     <img
                         className="w-100 rounded-2"
                         height={500}
@@ -53,30 +88,43 @@ const Home = () => {
                             name: 'Paris',
                             img: 'https://plus.unsplash.com/premium_photo-1661919210043-fd847a58522d?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                             country: 'FR',
+                            description:
+                                'Paris, the capital of France, is one of the most famous cities in the world, attracting millions of tourists every year. Located along the romantic Seine River, it is known as the "City of Light" due to its magnificent beauty and flourishing cultural and artistic scene. Paris is renowned not only for its iconic landmarks such as the Eiffel Tower, Notre-Dame Cathedral, and the Louvre Museum but also as a global fashion capital. With its mild climate, charming streets, quaint cafés, and exquisite cuisine, the city is an ideal destination. The people of Paris are known for their elegance and passion for the arts, contributing to a city that is both modern and historic, exuding an irresistible charm.',
+                            color: 'linear-gradient(to right, blue, white, red)',
                         },
                         {
                             id: 2,
                             name: 'Bali',
                             img: 'https://plus.unsplash.com/premium_photo-1668883189152-d771c402c385?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                             country: 'ID',
+                            description:
+                                'Bali, known as the "Island of the Gods," is a tropical paradise in Indonesia, famous for its stunning beaches, lush rice terraces, and sacred temples like Tanah Lot and Uluwatu. Rich in Hindu culture, the island is filled with vibrant ceremonies, traditional dances, and beautiful crafts. Visitors can enjoy surfing, diving, and trekking or explore the artistic town of Ubud. The island’s warm hospitality and delicious Balinese cuisine make every visit special. Whether seeking adventure or relaxation, Bali offers a perfect blend of nature, culture, and spirituality, leaving every traveler with unforgettable memories.',
+                            color: 'linear-gradient(to right, red, white)',
                         },
                         {
                             id: 3,
                             name: 'Tokyo',
                             img: 'https://plus.unsplash.com/premium_photo-1661914240950-b0124f20a5c1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                             country: 'JP',
+                            description:
+                                'Tokyo, the capital of Japan, is a vibrant metropolis that seamlessly blends tradition and modernity. As one of the most populous cities in the world, Tokyo is known for its towering skyscrapers, cutting-edge technology, and bustling streets filled with neon lights. Despite its modern appeal, the city also preserves its rich cultural heritage, with historic temples like Senso-ji, traditional tea houses, and beautiful cherry blossom parks. Tokyo is a global hub for fashion, entertainment, and cuisine, offering everything from Michelin-starred restaurants to delicious street food. Whether exploring the trendy districts of Shibuya and Shinjuku or enjoying the peaceful atmosphere of the Imperial Palace gardens, visitors can experience the dynamic energy and unique charm that make Tokyo an unforgettable destination.',
+                            color: 'linear-gradient(to left, red, white)',
                         },
                     ].map((place) => (
                         <Col md={4} key={place.id} className="mb-4">
                             <div
+                                onClick={() => handleShow(place)}
                                 style={{
                                     backgroundImage: `url(${place.img})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     width: '400px',
                                     height: '300px',
+                                    display: 'flex',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
                                 }}
-                                className="rounded-2 d-flex"
+                                className={styles.image}
                             >
                                 <h2 style={{ textShadow: '2px 2px 5px #003B95', color: 'white' }} className="ms-2">
                                     {place.name}
@@ -89,13 +137,46 @@ const Home = () => {
                                         height: '2em',
                                     }}
                                     title={place.country}
-                                    className='ms-2 mt-1'
+                                    className="ms-2 mt-1"
                                 />
                             </div>
                         </Col>
                     ))}
                 </Row>
             </Container>
+
+            {place != null && (
+                <Modal show={show} onHide={handleHide} centered size="xl">
+                    <Modal.Header className="border-0" closeButton style={{ background: `${place.color}` }}>
+                        <Modal.Title className="fs-3">
+                            {place.name}
+                            <ReactCountryFlag
+                                countryCode={place.country}
+                                svg
+                                style={{
+                                    width: '1.5em',
+                                    height: '1.5em',
+                                }}
+                                title={place.country}
+                                className="ms-2"
+                            />
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className="text-center d-flex border-0" style={{ background: `${place.color}` }}>
+                        <img
+                            src={place.img}
+                            alt={place.name}
+                            style={{ width: '50%', height: '300px', objectFit: 'cover', borderRadius: '12px' }}
+                            className="shadow-lg"
+                        />
+                        <div className="mt-3 mx-3">
+                            <h3>Introduction</h3>
+                            <p style={{ textAlign: 'justify' }}>{place.description}</p>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer className="border-0" style={{ background: `${place.color}` }}></Modal.Footer>
+                </Modal>
+            )}
         </div>
     );
 };

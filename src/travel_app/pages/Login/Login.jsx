@@ -1,10 +1,35 @@
-import React, { useRef, useState } from 'react';
-import { Form, Button, Container, Card, Alert } from 'react-bootstrap';
+import React, { useContext, useRef, useState } from 'react';
+import { Form, Button, Container, Card, Alert, Toast } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.scss';
+import { TravelContext } from '../../TravelContext';
 
 const Login = () => {
+    const [formLogin, setFormLogin] = useState({
+        username: '',
+        passwordLogin: '',
+    });
     const containerRef = useRef();
+    const navigate = useNavigate();
+    const { submitted, setSubmitted, stateButton, setStateButton } = useContext(TravelContext);
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        setStateButton(true);
+        if (formLogin.username != '' && formLogin.passwordLogin != '') {
+            navigate('/');
+            setSubmitted(true);
+            setStateButton(false);
+        } else {
+            setSubmitted(false);
+            setTimeout(() => setStateButton(false), 3000);
+        }
+    };
+
+    const handleChangeLogin = (e) => {
+        const { name, value } = e.target;
+        setFormLogin({ ...formLogin, [name]: value });
+    };
 
     const handleChangeSignUp = () => {
         if (containerRef.current) {
@@ -28,16 +53,46 @@ const Login = () => {
                 backgroundPosition: 'center',
             }}
         >
+            {stateButton && !submitted && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: '0%',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 10000,
+                    }}
+                >
+                    <Toast onClose={() => setStateButton(false)}>
+                        <Toast.Header>
+                            <strong className="me-auto text-danger">Notify</strong>
+                        </Toast.Header>
+                        <Toast.Body className="bg-danger text-white">Login failed</Toast.Body>
+                    </Toast>
+                </div>
+            )}
             <Container ref={containerRef} className={styles.loginContainer}>
                 <Card className={styles.loginCard}>
                     <Card.Body>
                         <h2 className="text-center mb-4">SIGN IN</h2>
-                        <Form>
+                        <Form onSubmit={handleLogin}>
                             <Form.Group controlId="username" className="mb-3">
-                                <Form.Control type="text" name="username" placeholder="Username" required />
+                                <Form.Control
+                                    type="text"
+                                    name="username"
+                                    value={formLogin.username}
+                                    placeholder="Username"
+                                    onChange={handleChangeLogin}
+                                />
                             </Form.Group>
                             <Form.Group controlId="passwordLogin" className="mb-3">
-                                <Form.Control type="password" name="passwordLogin" placeholder="Password" required />
+                                <Form.Control
+                                    type="password"
+                                    name="passwordLogin"
+                                    value={formLogin.passwordLogin}
+                                    placeholder="Password"
+                                    onChange={handleChangeLogin}
+                                />
                             </Form.Group>
                             <Button variant="primary" type="submit" className="w-100">
                                 LOGIN
