@@ -19,7 +19,7 @@ const Header = () => {
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse>
-                    <Nav className="me-auto">
+                    <Nav className="ms-auto">
                         {['Home', 'About', 'Contact', 'Login'].map((item, index) => {
                             const isFocus = loc.pathname == (item == 'Home' ? '/' : `/${item}`);
                             return (
