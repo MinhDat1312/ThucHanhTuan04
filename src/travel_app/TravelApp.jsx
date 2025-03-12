@@ -6,7 +6,7 @@ import Home from './pages/Home/Home.jsx';
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
 import Login from './pages/Login/Login.jsx';
-
+import Cart from './pages/Cart.jsx';
 const TravelApp = () => {
     return (
         <div>
@@ -16,6 +16,7 @@ const TravelApp = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/cart" element={<Cart />} />
             </Routes>
             <Footer />
         </div>

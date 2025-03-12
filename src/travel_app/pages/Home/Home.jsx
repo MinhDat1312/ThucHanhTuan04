@@ -6,8 +6,10 @@ import { TravelContext } from '../../TravelContext';
 
 const Home = () => {
     const [show, setShow] = useState(false);
+    const [check, setCheck] = useState(false);
     const [place, setPlace] = useState(null);
-    const { submitted, setSubmitted } = useContext(TravelContext);
+    const [showToast, setShowToast] = useState(false);
+    const { submitted, setSubmitted, cartItems, addToCart } = useContext(TravelContext);
 
     useEffect(() => {
         setTimeout(() => setSubmitted(false), 3000);
@@ -17,8 +19,23 @@ const Home = () => {
         setShow(true);
         setPlace(place);
     };
+
     const handleHide = () => {
         setShow(false);
+    };
+
+    const handleAddToCart = (place) => {
+        const isProductInCart = cartItems.some((item) => item.id === place.id);
+
+        setShowToast(true);
+        if (isProductInCart) {
+            setCheck(false);
+            setTimeout(() => setShowToast(false), 3000);
+        } else {
+            setCheck(true);
+            addToCart(place);
+            setTimeout(() => setShowToast(false), 3000);
+        }
     };
 
     return (
@@ -41,6 +58,28 @@ const Home = () => {
                     </Toast>
                 </div>
             )}
+
+            {showToast && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: '0%',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 10000,
+                    }}
+                >
+                    <Toast onClose={() => setShowToast(false)}>
+                        <Toast.Header>
+                            <strong className="me-auto">Notification</strong>
+                        </Toast.Header>
+                        <Toast.Body className={`text-white ${check ? 'bg-success' : 'bg-warning'}`}>
+                            {check ? 'Product is added' : 'This product is already in your cart!'}
+                        </Toast.Body>
+                    </Toast>
+                </div>
+            )}
+
             <Carousel style={{ marginLeft: '116px', marginRight: '130px' }} className="rounded-2">
                 <Carousel.Item className="rounded-2">
                     <img
@@ -74,7 +113,7 @@ const Home = () => {
                         <h1>Booking Car</h1>
                         <h3>Travel more, spend les.</h3>
                     </Carousel.Caption>
-                </Carousel.Item>
+                </Carousel.Item>{' '}
             </Carousel>
 
             <Container className="my-3">
@@ -90,6 +129,7 @@ const Home = () => {
                             country: 'FR',
                             description:
                                 'Paris, the capital of France, is one of the most famous cities in the world, attracting millions of tourists every year. Located along the romantic Seine River, it is known as the "City of Light" due to its magnificent beauty and flourishing cultural and artistic scene. Paris is renowned not only for its iconic landmarks such as the Eiffel Tower, Notre-Dame Cathedral, and the Louvre Museum but also as a global fashion capital. With its mild climate, charming streets, quaint cafés, and exquisite cuisine, the city is an ideal destination. The people of Paris are known for their elegance and passion for the arts, contributing to a city that is both modern and historic, exuding an irresistible charm.',
+                            price: 500,
                             color: 'linear-gradient(to right, blue, white, red)',
                         },
                         {
@@ -99,6 +139,7 @@ const Home = () => {
                             country: 'ID',
                             description:
                                 'Bali, known as the "Island of the Gods," is a tropical paradise in Indonesia, famous for its stunning beaches, lush rice terraces, and sacred temples like Tanah Lot and Uluwatu. Rich in Hindu culture, the island is filled with vibrant ceremonies, traditional dances, and beautiful crafts. Visitors can enjoy surfing, diving, and trekking or explore the artistic town of Ubud. The island’s warm hospitality and delicious Balinese cuisine make every visit special. Whether seeking adventure or relaxation, Bali offers a perfect blend of nature, culture, and spirituality, leaving every traveler with unforgettable memories.',
+                            price: 300,
                             color: 'linear-gradient(to right, red, white)',
                         },
                         {
@@ -108,6 +149,7 @@ const Home = () => {
                             country: 'JP',
                             description:
                                 'Tokyo, the capital of Japan, is a vibrant metropolis that seamlessly blends tradition and modernity. As one of the most populous cities in the world, Tokyo is known for its towering skyscrapers, cutting-edge technology, and bustling streets filled with neon lights. Despite its modern appeal, the city also preserves its rich cultural heritage, with historic temples like Senso-ji, traditional tea houses, and beautiful cherry blossom parks. Tokyo is a global hub for fashion, entertainment, and cuisine, offering everything from Michelin-starred restaurants to delicious street food. Whether exploring the trendy districts of Shibuya and Shinjuku or enjoying the peaceful atmosphere of the Imperial Palace gardens, visitors can experience the dynamic energy and unique charm that make Tokyo an unforgettable destination.',
+                            price: 400,
                             color: 'linear-gradient(to left, red, white)',
                         },
                     ].map((place) => (
@@ -122,13 +164,11 @@ const Home = () => {
                                     height: '300px',
                                     display: 'flex',
                                     borderRadius: '8px',
+                                    position: 'relative',
                                     cursor: 'pointer',
                                 }}
                                 className={styles.image}
                             >
-                                <h2 style={{ textShadow: '2px 2px 5px #003B95', color: 'white' }} className="ms-2">
-                                    {place.name}
-                                </h2>
                                 <ReactCountryFlag
                                     countryCode={place.country}
                                     svg
@@ -139,6 +179,35 @@ const Home = () => {
                                     title={place.country}
                                     className="ms-2 mt-1"
                                 />
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        bottom: '20px',
+                                        left: '55px',
+                                        width: '300px',
+                                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                        color: 'white',
+                                        padding: '10px',
+                                        borderRadius: '5px',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <h2 className="mb-0">{place.name}</h2>
+                                    <div className="d-flex align-items-center">
+                                        <span className="fs-4 ms-4 me-2">{place.price}$</span>
+                                        <Button
+                                            variant="primary"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleAddToCart(place);
+                                            }}
+                                        >
+                                            Add to Cart
+                                        </Button>
+                                    </div>
+                                </div>
                             </div>
                         </Col>
                     ))}
