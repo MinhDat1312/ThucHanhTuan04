@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
     const orders = localStorage.getItem('orderTravels') ? JSON.parse(localStorage.getItem('orderTravels')) : [];
-    const { cartItems, setCartItems, formatDateTime } = useContext(TravelContext);
+    const { cartItems, setCartItems, deleteFromCart } = useContext(TravelContext);
     const navigate = useNavigate();
 
     const [quantities, setQuantities] = useState({});
@@ -84,6 +84,7 @@ const Cart = () => {
         setUserInfo({ name: '', departureDate: '', returnDate: '' });
         setQuantities({});
         setLuggageWeights({});
+        deleteFromCart(currentPlace.id);
     };
 
     const handleInputChange = (e) => {
@@ -110,7 +111,7 @@ const Cart = () => {
             </h2>
             {cartItems.length === 0 ? (
                 <div className="text-center">
-                    <h4>Your cart is empty</h4>
+                    <h4 className="text-danger">Your cart is empty</h4>
                     <Button onClick={() => navigate('/')} variant="primary">
                         Continue booking
                     </Button>
@@ -270,7 +271,7 @@ const Cart = () => {
                 {confirmedOrders.length === 0 ? (
                     <p>No orders confirmed yet.</p>
                 ) : (
-                    <Row style={{ paddingInline: '8px' }} className='justify-content-between gap-3'>
+                    <Row style={{ paddingInline: '8px' }} className="justify-content-center gap-3 m-0 w-100">
                         {confirmedOrders.map((order, index) => (
                             <Card
                                 as={Col}
@@ -289,7 +290,7 @@ const Cart = () => {
                                     <span>
                                         Quantity: {order.quantity}, Luggage Weight: {order.luggageWeight} kg
                                     </span>
-                                    <span className='text-success'>Price: ${order.price}</span>
+                                    <span className="text-success">Price: ${order.price}</span>
                                 </Card.Body>
                             </Card>
                         ))}

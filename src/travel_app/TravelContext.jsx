@@ -17,6 +17,11 @@ export const TravelProvider = ({ children }) => {
         setCartItems((prevItems) => [...prevItems, place]);
     };
 
+    const deleteFromCart = (id) => {
+        const newCartItem = cartItems.filter((item) => item.id != id);
+        setCartItems(newCartItem);
+    };
+
     const formatDateTime = (date) =>
         `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
             .toString()
@@ -33,6 +38,7 @@ export const TravelProvider = ({ children }) => {
         cartItems,
         setCartItems,
         addToCart,
+        deleteFromCart,
         formatDateTime,
     };
 
